@@ -1,15 +1,16 @@
-pipeline {
-  agent any
+pipeline{
+   agent any
 
-  environment {
+   environment {
       ANSIBLE_CONFIG="${WORKSPACE}/deploy/ansible.cfg"
     }
 
-   parameters {
+     parameters {
       string(name: 'inventory', defaultValue: 'dev',  description: 'This is the inventory file for the environment to deploy configuration')
           }
+     
 
-    stages{
+   stages{
 
       stage("Initial cleanup") {
           steps {
@@ -26,22 +27,23 @@ pipeline {
        }
       stage('Prepare Ansible For Execution') {
         steps {
-          sh 'echo ${WORKSPACE}'   
-          sh 'sed -i "3 a roles_path=${WORKSPACE}/roles" ${WORKSPACE}/deploy/ansible.cfg'       
+          sh 'echo ${WORKSPACE}'
+          sh 'sed -i "3 a roles_path = ${WORKSPACE}/roles"  ${WORKSPACE}/deploy/ansible.cfg'
+          
         }
-     }
+      }
 
 
       stage('Run Ansible') {
         steps {
-            ansiblePlaybook become: true, colorized: true, credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory/dev.yml', playbook: 'playbooks/site.yml'
+            ansiblePlaybook become: true, colorized: true, credentialsId: 'privatekey', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory/${inventory}.yml', playbook: 'playbooks/site.yml'
         }
       }
 
-      stage('Clean Workspace after build'){
+      stage('Clean Workspace after build'){ 
         steps{
           cleanWs()
         }
       }
-   }
-}
+   }   
+}  

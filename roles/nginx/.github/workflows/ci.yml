@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         distro:
-          - rockylinux8
+          - centos8
           - ubuntu2004
           - ubuntu1804
           - debian10
